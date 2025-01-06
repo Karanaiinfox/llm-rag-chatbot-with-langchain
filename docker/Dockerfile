@@ -33,6 +33,9 @@ RUN pip install -r requirements.txt
 # copy all elements
 COPY . /app
  
+# Copy the 'log.ini' file from the 'app' directory to the container
+COPY app/log.ini /app/log.ini
+
 # listen to port 8501
 EXPOSE 8501
 
