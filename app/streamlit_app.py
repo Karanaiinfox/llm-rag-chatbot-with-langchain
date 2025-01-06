@@ -26,6 +26,7 @@
 import streamlit as st
 import logging
 import logging.config
+import os
 #import torch
 import time
 import psutil
@@ -50,7 +51,14 @@ st.set_page_config(layout="wide")
     
 # Configure logging from the log.ini file
 # "/app/log.ini"
-logging.config.fileConfig("./app/log.ini")
+# Get the absolute path to the log.ini file inside the container
+log_config_path = "/app/app/log.ini"
+
+# Check if the file exists
+if os.path.exists(log_config_path):
+    logging.config.fileConfig(log_config_path)
+else:
+    print(f"Error: {log_config_path} not found!")
 
 # Get the logger
 logger = logging.getLogger()
