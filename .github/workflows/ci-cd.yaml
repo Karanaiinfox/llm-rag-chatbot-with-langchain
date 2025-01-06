@@ -26,7 +26,7 @@ jobs:
     # Step 5: Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/llama_rag:latest .  # Tag the image with the GitHub Container Registry URL
+        docker build -t ghcr.io/${{ github.repository }}/llama_rag:latest  -f ./docker/Dockerfile .  # Tag the image with the GitHub Container Registry URL
 
     # Step 6: Push the Docker image to GitHub Container Registry
     - name: Push Docker image
@@ -46,7 +46,7 @@ jobs:
       run: |
         aws eks --region us-east-1 update-kubeconfig --name llama-cluster-cpu
       # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
-      
+
 
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
