@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: llama-container
-        image: ghcr.io/amajji/streamlit:latest
+        image: ghcr.io/amajji/llama_rag:latest
         ports:
         - containerPort: 80
         # resources:
