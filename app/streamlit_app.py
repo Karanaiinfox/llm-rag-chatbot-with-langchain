@@ -46,7 +46,7 @@ from langchain.memory import ConversationBufferMemory
 st.set_page_config(layout="wide")
 #STREAMLIT_STATIC_PATH = str(pathlib.Path(st.__path__[0]) / "AI_Hackathon_Dataset/pdf")
 #STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
-STREAMLIT_STATIC_PATH = "./dataset/pdf"
+#STREAMLIT_STATIC_PATH = "./dataset/pdf"
     
 # Configure logging from the log.ini file
 # "/app/log.ini"
