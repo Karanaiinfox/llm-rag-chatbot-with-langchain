@@ -55,10 +55,15 @@ Another paramater we should take into consideration is the memory needed to run 
 ## :rocket: Repository Structure
 
 The repository contains the following files & directories:
+- **.github/workflows** : This directory contains the .yaml file that outlines the instructions for our automated testing and deployment process.
 - **app** : it contains the streamlit code for the **LLM RAG Chatbot** webapp.
 - **Dockerfile** : it contains the instructions to build the docker image. 
+- **kubernetes**: in this folder, you will find the necessary YAML files for deploying the application on a Kubernetes cluster:
+    - llama-deployment.yaml: This file defines the deployment configuration, specifying the containers, replicas, resource requests, and other settings for running the application in the cluster.
+    - llama-service.yaml: This file sets up a Kubernetes service to expose the application, allowing internal and external communication by defining the ports, selectors, and other networking configurations.
 - **images** : this folder contains all images used on the README file.
 - **requirements.txt:** all the packages used in this project.
+
 
  
 
