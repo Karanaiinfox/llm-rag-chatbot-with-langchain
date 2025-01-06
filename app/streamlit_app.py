@@ -24,6 +24,8 @@
 
 # Import Python Libraries
 import streamlit as st
+import logging
+import logging.config
 #import torch
 import time
 import psutil
@@ -36,16 +38,22 @@ from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain_community.llms import CTransformers
 from langchain.memory import ConversationBufferMemory
 
+
 #########################################################################################
 #                                Variables                                              #
 #########################################################################################
 
 st.set_page_config(layout="wide")
 #STREAMLIT_STATIC_PATH = str(pathlib.Path(st.__path__[0]) / "AI_Hackathon_Dataset/pdf")
-STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
+#STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
 #STREAMLIT_STATIC_PATH = "./dataset/pdf"
     
+# Configure logging from the log.ini file
+# "/app/log.ini"
+logging.config.fileConfig("./app/log.ini")
 
+# Get the logger
+logger = logging.getLogger()
 #########################################################################################
 #                                Functions                                              #
 #########################################################################################
@@ -76,60 +84,60 @@ STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
 
 
 
-st.cache_resource
+st.cache_resource(max_entries=1)
 @profile
 def create_vector_db(data_path):
     """function to create vector db provided the pdf files"""
 
-    print(" -- loader ... " )
+    logger.info(" -- loader ... " )
     # define the docs's path
     loader = DirectoryLoader(data_path, glob="*.pdf", loader_cls=PyPDFLoader)
-    print(" -- loader OK " )
+    logger.info(" -- loader OK ")
 
-    print(" -- documents ... " )
+    logger.info(" -- documents ... " )
     # load documents
     documents = loader.load()
-    print(" -- documents OK " )
+    logger.info(" -- documents OK " )
 
     # use recursive splitter to split each document into chunks
-    print(" -- text_splitter ... " )
+    logger.info(" -- text_splitter ... " )
 #    text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=30)
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=30)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=10)
+    logger.info(" -- text_splitter OK " )
 
-    print(" -- text_splitter OK " )
-
-    print(" -- texts ... " )
+    logger.info(" -- texts ... " )
     texts = text_splitter.split_documents(documents)
-    print(" -- texts OK " )   
+    logger.info(" -- texts OK " )   
 
     # Initialize embeddings model with GPU support
     #device = "cuda" if torch.cuda.is_available() else "cpu"
     device = "cpu"
     
     # generate embeddings for each chunk
-    print(" -- embeddings ... " )
+    logger.info(" -- embeddings ... " )
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
         multi_process=True,
         encode_kwargs={"normalize_embeddings": True},
         model_kwargs={"device": device},
     )
-    print(" -- embeddings OK " )
+    logger.info(" -- embeddings OK " )
     
-    print(" -- FAISS ... " )
+    logger.info(" -- FAISS ... " )
     # indexing database
     db = FAISS.from_documents(texts, embeddings)
-    print(" -- FAISS OK " )
+    logger.info(" -- FAISS OK " )
     return db
 
 
 
 
-st.cache_resource
+st.cache_resource(max_entries=1)
 @profile
 def load_llm(temperature, max_new_tokens, top_p, top_k):
     """Load the LLM model"""
     
+    logger.info(" -- Load llm model with CTransformers ...")
     # Load the locally downloaded model here
     llm = CTransformers(
         model="TheBloke/Llama-2-7B-Chat-GGML",
@@ -139,6 +147,7 @@ def load_llm(temperature, max_new_tokens, top_p, top_k):
         top_p=top_p,
         top_k=top_k,
     )
+    logger.info(" -- Load llm model with CTransformers OK ")
 
     # List all available attributes for the model
     print(llm.config)  
@@ -147,12 +156,15 @@ def load_llm(temperature, max_new_tokens, top_p, top_k):
     return llm
 
 
+
 st.cache_resource
 @profile
 def model_retriever(vector_db):
     # Create a retriever object from the 'db' with a search configuration where
     # it retrieves up to top_k relevant splits/documents.
-    retriever = vector_db.as_retriever(search_kwargs={"k": 2})    
+    logger.info(" -- Build retriever ...")
+    retriever = vector_db.as_retriever(search_kwargs={"k": 2})   
+    logger.info(" -- Build retriever OK ") 
 
     return retriever
 
@@ -224,16 +236,20 @@ def page_1():
 
 
 
-    # Check memory usage before the forward pass
-    print("Creation of the vector database ... ")
-    start_time = time.time()
 
-    # create the vector database
-    vector_db = create_vector_db(STREAMLIT_STATIC_PATH)
 
-    # end time
-    end_time = time.time()
-    print(f" Creation of the vector database in {end_time - start_time: .2f} seconds ")
+    # Lazy load the vector DB and LLM only when needed
+    if "vector_db" not in st.session_state:
+        # Check memory usage before the forward pass
+        logger.info("Creation of the vector database ... ")
+        start_time = time.time()
+
+        # Lazy load the vector database (FAISS index) when needed
+        st.session_state["vector_db"] = create_vector_db(STREAMLIT_STATIC_PATH)
+
+        # end time
+        end_time = time.time()
+        logger.info(f" Creation of the vector database in {end_time - start_time: .2f} seconds ")
 
     #cpu_memory, gpu_memory = get_memory_usage()
     #print(f"CPU Memory Usage: {cpu_memory}%")
@@ -243,16 +259,16 @@ def page_1():
     #     print(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
 
 
+    if "llm_model" not in st.session_state:
+        logger.info(" Model loading ... ")
+        start_time = time.time()
 
-    print(" Model loading ... ")
-    start_time = time.time()
+        # Lazy load the language model when needed
+        st.session_state["llm_model"] = load_llm(temperature, max_length, top_p, top_k)
 
-    # load the model
-    llm_model = load_llm(temperature, max_length, top_p, top_k)
-
-    # end time
-    end_time = time.time()
-    print(f" Model loading in {end_time - start_time: .2f} seconds ")
+        # end time
+        end_time = time.time()
+        logger.info(f" Model loading in {end_time - start_time: .2f} seconds ")
 
     # cpu_memory, gpu_memory = get_memory_usage()
     # print(f"CPU Memory Usage: {cpu_memory}%")
@@ -260,11 +276,6 @@ def page_1():
     # if gpu_memory:
     #     print(f"GPU Memory Allocated: {gpu_memory['allocated_memory']} MB")
     #     print(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
-
-
-
-    # model retriever
-    retriever = model_retriever(vector_db)
 
 
 
@@ -281,21 +292,35 @@ def page_1():
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-        # Create a question-answering instance with the provided params
-        q_a = q_a_llm_model(retriever, llm_model)
+        # Get the vector database and LLM model from session state
+        vector_db = st.session_state["vector_db"]
+        llm_model = st.session_state["llm_model"]
 
         # chat history 
         #chat_history = []
 
-        # get the result
-        #result = q_a.run({"query": prompt, "chat_history": chat_history})
-        result = q_a.run({"query": prompt })
-        # print("------------ : ", result)
+        # Model retriever should ideally be done only once and stored in session_state if not done already
+        if "retriever" not in st.session_state:
+            st.session_state["retriever"] = model_retriever(vector_db)
+
+        # Use the retriever that is already created and stored
+        retriever = st.session_state["retriever"]
+
+        # Create the Q&A model (you could cache this too, or ensure it's created only once)
+        if "q_a" not in st.session_state:
+            st.session_state["q_a"] = q_a_llm_model(retriever, llm_model)
+
+        # Use the stored Q&A model for the query
+        q_a = st.session_state["q_a"]
+        
+        # Get the result from the Q&A model
+        result = q_a.run({"query": prompt})
 
         st.session_state.messages.append(
             {"role": "assistant", "content": "voici le message de retour"}
         )
         st.chat_message("assistant").write(result)
+
 
 
 def main():

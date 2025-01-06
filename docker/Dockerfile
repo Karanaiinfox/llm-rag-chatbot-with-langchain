@@ -37,10 +37,10 @@ COPY . /app
 EXPOSE 8501
 
 # Set the environment variable for Streamlit static files
-ENV STREAMLIT_STATIC_PATH=/dataset/pdf
+ENV STREAMLIT_STATIC_PATH=/app/dataset/pdf
 
 # Healthcheck command to ensure the container is running
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
 # run the streamlit run command
-ENTRYPOINT ["streamlit", "run", "./app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0", "--log-config ./app/log.ini"]
+ENTRYPOINT ["streamlit", "run", "./app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
