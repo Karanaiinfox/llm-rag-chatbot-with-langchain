@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: llama-container
-        image: ghcr.io/amajji/llama_rag:latest
+        image: ghcr.io/${{ github.repository }}/llama_rag:latest 
         ports:
         - containerPort: 80
         # resources:
@@ -24,4 +24,3 @@ spec:
         #   limits:
         #     memory: "2Gi"   # Maximum memory the container can use
         #     cpu: "8"         # Maximum CPU cores the container can use
-
