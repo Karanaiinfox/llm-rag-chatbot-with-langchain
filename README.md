@@ -61,7 +61,8 @@ The repository contains the following files & directories:
 - **kubernetes**: in this folder, you will find the necessary YAML files for deploying the application on a Kubernetes cluster:
     - llama-deployment.yaml: This file defines the deployment configuration, specifying the containers, replicas, resource requests, and other settings for running the application in the cluster.
     - llama-service.yaml: This file sets up a Kubernetes service to expose the application, allowing internal and external communication by defining the ports, selectors, and other networking configurations.
-- **images** : this folder contains all images used on the README file.
+- **dataset**: this folder contains external PDF files used for Retrieval-Augmented Generation (RAG).
+- **images** : this folder includes all the images referenced in the README file.
 - **requirements.txt:** all the packages used in this project.
 
 
@@ -88,7 +89,8 @@ If you are interested in deploying the LLM web application on AWS. Below a step-
 **Step 1**: Push Your Docker Image to GitHub Container Registry (you can also use **Amazon Elastic Container Registry (ECR)**):
 - docker build -t ghcr.io/<your-username>/<your-repo-name>:latest . : To make sure that the Dockerfile is correctly set up to run the streamlit Q&A model. 
 - echo $CR_PAT | docker login ghcr.io -u <your-username> --password-stdin : Log in to GitHub Container Registry ($CR_PAT is your GitHub Personal Access Token, which should have write:packages, read:packages, and delete:packages scope.)
-- docker push ghcr.io/<your-username>/<your-repo-name>:latest : Tag and push the image to GitHub Container Registry
+- docker push ghcr.io/${{ github.repository }}/llama_rag:latest : Tag and push the image to GitHub Container Registry
+
 
 **Step 2**: Set Up AWS EKS (Elastic Kubernetes Service):
 - After creating an AWS account, you need to create an IAM user. To fully manage the EKS container, you should attach the following policies to your profil : AmazonEKSClusterPolicy, AmazonEKSServicePolicy, AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEC2FullAccess, AmazonVPCFullAccess, IAMFullAccess, AmazonCloudFormationFullAccess, ElasticLoadBalancingFullAccess.

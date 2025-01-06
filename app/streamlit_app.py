@@ -46,7 +46,7 @@ from langchain.memory import ConversationBufferMemory
 st.set_page_config(layout="wide")
 #STREAMLIT_STATIC_PATH = str(pathlib.Path(st.__path__[0]) / "AI_Hackathon_Dataset/pdf")
 #STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
-#STREAMLIT_STATIC_PATH = "./dataset/pdf"
+STREAMLIT_STATIC_PATH = "./dataset/pdf"
     
 # Configure logging from the log.ini file
 # "/app/log.ini"
@@ -150,7 +150,7 @@ def load_llm(temperature, max_new_tokens, top_p, top_k):
     logger.info(" -- Load llm model with CTransformers OK ")
 
     # List all available attributes for the model
-    print(llm.config)  
+    logger.info(llm.config)  
 
     # return the LLM
     return llm
@@ -180,7 +180,12 @@ def q_a_llm_model(retriever, llm_model):
     # Create a question-answering instance (qa) using the RetrievalQA class.
     # It's configured with a language model (llm), a chain type "refine,"
     # the retriever we created, and an option to not return source documents.
-  
+    q_a = RetrievalQA.from_chain_type(
+        llm=llm_model,
+        chain_type="refine",
+        retriever=retriever,
+        return_source_documents=False,
+    )
 
     return q_a
 
@@ -247,11 +252,11 @@ def page_1():
         logger.info(f" Creation of the vector database in {end_time - start_time: .2f} seconds ")
 
     #cpu_memory, gpu_memory = get_memory_usage()
-    #print(f"CPU Memory Usage: {cpu_memory}%")
+    #logger.info(f"CPU Memory Usage: {cpu_memory}%")
 
     # if gpu_memory:
-    #     print(f"GPU Memory Allocated: {gpu_memory['allocated_memory']} MB")
-    #     print(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
+    #     logger.info(f"GPU Memory Allocated: {gpu_memory['allocated_memory']} MB")
+    #     logger.info(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
 
 
     if "llm_model" not in st.session_state:
@@ -266,11 +271,11 @@ def page_1():
         logger.info(f" Model loading in {end_time - start_time: .2f} seconds ")
 
     # cpu_memory, gpu_memory = get_memory_usage()
-    # print(f"CPU Memory Usage: {cpu_memory}%")
+    # logger.info(f"CPU Memory Usage: {cpu_memory}%")
 
     # if gpu_memory:
-    #     print(f"GPU Memory Allocated: {gpu_memory['allocated_memory']} MB")
-    #     print(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
+    #     logger.info(f"GPU Memory Allocated: {gpu_memory['allocated_memory']} MB")
+    #     logger.info(f"GPU Memory Reserved: {gpu_memory['reserved_memory']} MB")
 
 
 
@@ -308,8 +313,19 @@ def page_1():
         # Use the stored Q&A model for the query
         q_a = st.session_state["q_a"]
         
+        # Start the timer
+        start_time = time.time()
+
         # Get the result from the Q&A model
         result = q_a.run({"query": prompt})
+
+        # End the timer
+        end_time = time.time()
+
+        # Calculate the inference time
+        inference_time = end_time - start_time
+
+        logger.info(f"Inference Time: {inference_time:.4f} seconds")
 
         st.session_state.messages.append(
             {"role": "assistant", "content": "voici le message de retour"}
