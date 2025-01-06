@@ -180,12 +180,7 @@ def q_a_llm_model(retriever, llm_model):
     # Create a question-answering instance (qa) using the RetrievalQA class.
     # It's configured with a language model (llm), a chain type "refine,"
     # the retriever we created, and an option to not return source documents.
-    q_a = RetrievalQA.from_chain_type(
-        llm=llm_model,
-        chain_type="refine",
-        retriever=retriever,
-        return_source_documents=False,
-    )
+  
 
     return q_a
 
