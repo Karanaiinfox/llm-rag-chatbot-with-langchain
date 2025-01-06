@@ -34,7 +34,7 @@ jobs:
     # Step 4: Set up kubectl to interact with EKS
     - name: Set up kubectl for EKS
       run: |
-        aws eks --region us-east-1 update-kubeconfig --name llama-cluster-cpu
+        aws eks --region us-east-1 update-kubeconfig --name llama-cluster
       # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
 
 
