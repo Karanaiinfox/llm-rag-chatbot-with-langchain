@@ -23,21 +23,6 @@ jobs:
         username: ${{ github.actor }}  # GitHub username
         password: ${{ secrets.GHCR_TOKEN }}  # Use the GitHub token stored as a secret
 
-    # Step 3: Set up AWS credentials for GitHub Actions
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-  
-
-    # Step 4: Set up kubectl to interact with EKS
-    - name: Set up kubectl for EKS
-      run: |
-        aws eks --region us-east-1 update-kubeconfig --name llama-cluster-cpu
-      # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
-
     # Step 5: Build the Docker image
     - name: Build Docker image
       run: |
@@ -47,6 +32,21 @@ jobs:
     - name: Push Docker image
       run: |
         docker push ghcr.io/${{ github.repository }}/llama_rag:latest  # Push the image to GitHub Container Registry
+
+    # Step 3: Set up AWS credentials for GitHub Actions
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    # Step 4: Set up kubectl to interact with EKS
+    - name: Set up kubectl for EKS
+      run: |
+        aws eks --region us-east-1 update-kubeconfig --name llama-cluster-cpu
+      # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
+      
 
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
