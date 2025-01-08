@@ -14,10 +14,9 @@ spec:
     spec:
       containers:
       - name: llama-container
-        image: ghcr.io/${{ github.repository }}/llama_rag:latest 
+        image: ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }} 
         ports:
         - containerPort: 80
-
         #resources:
         #   requests:
         #     memory: "2Gi"   # Guaranteed memory for the container

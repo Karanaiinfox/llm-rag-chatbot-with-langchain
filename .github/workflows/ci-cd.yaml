@@ -40,12 +40,16 @@ jobs:
     # Step 5: Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/llama_rag:latest  -f ./docker/Dockerfile . --no-cache  # Tag the image with the GitHub Container Registry URL
+        docker build -t ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  -f ./docker/Dockerfile . --no-cache  # Tag the image with the GitHub Container Registry URL
 
     # Step 6: Push the Docker image to GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository }}/llama_rag:latest  # Push the image to GitHub Container Registry
+        docker push ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  # Push the image to GitHub Container Registry
+        gh api \
+          --method PATCH \
+          /user/packages/container/llama_rag/versions/latest \
+          -f visibility=public
 
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
