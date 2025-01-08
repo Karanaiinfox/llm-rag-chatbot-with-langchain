@@ -47,7 +47,6 @@ jobs:
       run: |
         docker push ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  # Push the image to GitHub Container Registry
 
-
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
       run: |
