@@ -37,7 +37,6 @@ jobs:
         aws eks --region us-east-1 update-kubeconfig --name llama-cluster
       # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
 
-
     # Step 5: Build the Docker image
     - name: Build Docker image
       run: |
