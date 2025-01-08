@@ -33,6 +33,8 @@ RUN pip install -r requirements.txt
 # copy all elements
 COPY . /app
  
+# Create the logs directory
+RUN mkdir -p /app/app/logs
 
 # listen to port 8501
 EXPOSE 8501

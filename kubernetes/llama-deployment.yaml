@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: llama-container
-        image: ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }} 
+        #image: ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }} 
+        image: ghcr.io/amajji/llm-rag-chatbot-with-langchain/llama_rag:0229e1cb84d4bd0d64ab0cb8eceb87d72469ff81
         ports:
         - containerPort: 80
         #resources:
