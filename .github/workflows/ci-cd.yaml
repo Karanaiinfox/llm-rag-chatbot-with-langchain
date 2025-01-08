@@ -48,17 +48,6 @@ jobs:
         docker push ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  # Push the image to GitHub Container Registry
 
 
-    # Step 7: Set the Docker image visibility to public (using GH CLI)
-    - name: Set image visibility to public
-      run: |
-        gh api \
-          --method PATCH \
-          /user/packages/container/llama_rag/versions/${{ github.sha }} \
-          -f visibility=public
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Authenticate GitHub CLI
-        
-
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
       run: |
