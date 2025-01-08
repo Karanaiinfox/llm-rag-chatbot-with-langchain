@@ -48,6 +48,8 @@ st.set_page_config(layout="wide")
 #STREAMLIT_STATIC_PATH = str(pathlib.Path(st.__path__[0]) / "AI_Hackathon_Dataset/pdf")
 #STREAMLIT_STATIC_PATH = "/app/dataset/pdf"
 #STREAMLIT_STATIC_PATH = "./dataset/pdf"
+
+static_path = os.getenv("STREAMLIT_STATIC_PATH")
     
 # Configure logging from the log.ini file
 # "/app/log.ini"
@@ -253,7 +255,7 @@ def page_1():
         start_time = time.time()
 
         # Lazy load the vector database (FAISS index) when needed
-        st.session_state["vector_db"] = create_vector_db(STREAMLIT_STATIC_PATH)
+        st.session_state["vector_db"] = create_vector_db(static_path)
 
         # end time
         end_time = time.time()
