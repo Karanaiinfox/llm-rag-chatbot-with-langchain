@@ -34,7 +34,6 @@ RUN pip install -r requirements.txt
 COPY . /app
  
 
-
 # listen to port 8501
 EXPOSE 8501
 

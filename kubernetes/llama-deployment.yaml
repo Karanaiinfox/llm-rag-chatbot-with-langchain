@@ -17,7 +17,8 @@ spec:
         image: ghcr.io/${{ github.repository }}/llama_rag:latest 
         ports:
         - containerPort: 80
-        # resources:
+
+        #resources:
         #   requests:
         #     memory: "2Gi"   # Guaranteed memory for the container
         #     cpu: "6"         # Guaranteed CPU for the container 
