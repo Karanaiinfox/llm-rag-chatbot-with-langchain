@@ -1,35 +1,35 @@
-############################################################################################
+################################################################################################################
 
-#                                  Author: Anass MAJJI                                     #
+#                                           Author: Anass MAJJI                                                #
  
-#                               File Name: streamlit_app.py                                #
+#                                       File Name: streamlit_app.py                                            #
 
-#                           Creation Date: May 06, 2024                                    #
+#                                       Creation Date: May 06, 2024                                            #
 
-#                         Source Language: Python                                          #
+#                                        Source Language: Python                                               #
 
-#         Repository:    https://github.com/amajji/LLM-RAG-Chatbot-With-LangChain          #
+#                    Repository:    https://github.com/amajji/LLM-RAG-Chatbot-With-LangChain                   #
 
-#                              --- Code Description ---                                    #
+#                                         --- Code Description ---                                             #
 
-#    Deploy LLM RAG Chatbot with Langchain on a Streamlit web application using only CPU   #
+#               Deploy LLM RAG Chatbot with Langchain on a Streamlit web application using only CPU            #
 
-############################################################################################
+################################################################################################################
 
 
-############################################################################################
-#                                   Packages                                               #
-############################################################################################
+################################################################################################################
+#                                               Packages                                                       #
+################################################################################################################
 import streamlit as st
 import os
 from llm import load_llm, model_retriever, q_a_llm_model
-from vector_db import q_a_llm_model
+from vector_db import create_vector_db
 from utils import configure_logging, get_memory_usage
 
 
-#########################################################################################
-#                                Variables                                              #
-#########################################################################################
+################################################################################################################
+#                                                Variables                                                     #
+################################################################################################################
 
 # Define Streamlit layout and global variables
 st.set_page_config(layout="wide")
@@ -40,9 +40,9 @@ static_path = os.getenv("STREAMLIT_STATIC_PATH")
 log_config_path = "/app/app/log.ini"
 configure_logging(log_config_path)
 
-#########################################################################################
-#                                main code                                              #
-#########################################################################################
+################################################################################################################
+#                                                main code                                                    #
+################################################################################################################
 
 
 # First streamlit's page

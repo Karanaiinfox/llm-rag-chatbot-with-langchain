@@ -10,7 +10,7 @@ import time
 logger = logging.getLogger()
 
 
-def c(data_path):
+def create_vector_db(data_path):
     """function to create vector db provided the pdf files"""
     try:
         logger.info("Creation of the vector database ... ")
@@ -42,7 +42,6 @@ def c(data_path):
             encode_kwargs={"normalize_embeddings": True},
             model_kwargs={"device": device},
         )
-        
         # indexing database
         db = FAISS.from_documents(texts, embeddings)
 

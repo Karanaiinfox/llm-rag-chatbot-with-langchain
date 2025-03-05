@@ -10,10 +10,8 @@ logger = logging.getLogger()
 
 def load_llm(temperature, max_new_tokens, top_p, top_k):
     """Load the LLM model"""
-    
-    logger.info("Start loading llm model with CTransformers ...")
-
     try:
+        logger.info("Start loading llm model with CTransformers ...")
         # start time
         start_time = time.time()
 
@@ -26,7 +24,6 @@ def load_llm(temperature, max_new_tokens, top_p, top_k):
             top_p=top_p,
             top_k=top_k,
         )
-
         # end time
         end_time = time.time()
         logger.info(f"Model loaded with CTransformers successfully in {end_time - start_time: .2f} seconds")
@@ -56,7 +53,6 @@ def model_retriever(vector_db):
         logger.info(f"Error creating a retriever: {e}")
         raise
 
-
 def q_a_llm_model(retriever, llm_model):
     """
     This function loads the LLM model, gets the relevent
@@ -72,7 +68,6 @@ def q_a_llm_model(retriever, llm_model):
             retriever=retriever,
             return_source_documents=False,
         )
-
         return q_a
     except Exception as e:
         logger.error(f"Error creating Q&A LLM model: {e}")
