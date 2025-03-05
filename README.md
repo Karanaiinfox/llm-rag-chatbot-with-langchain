@@ -75,10 +75,12 @@ The repository contains the following files & directories:
 In this section, we are going to make a demonstration of the streamlit webapp. The user can ask any question and the chatbot will answer. 
 
 To launch the deployment of the streamlit app with docker, type the following commands :
-
-- docker build -t streamlit . : to build the docker image
-
-- docker run -p 8501:8501 streamlit: to launch the container based on our image
+```bash
+docker build -t streamlit . : to build the docker image
+```
+```bash
+docker run -p 8501:8501 streamlit: to launch the container based on our image
+```
 
 To view our app, users can browse to http://0.0.0.0:8501 or http://localhost:8501
 
@@ -87,10 +89,18 @@ To view our app, users can browse to http://0.0.0.0:8501 or http://localhost:850
 If you are interested in deploying the LLM web application on AWS. Below a step-by-step guide to follow :
 
 **Step 1**: Push Your Docker Image to GitHub Container Registry (you can also use **Amazon Elastic Container Registry (ECR)**):
-- docker build -t ghcr.io/<your-username>/<your-repo-name>:latest . : To make sure that the Dockerfile is correctly set up to run the streamlit Q&A model. 
-- echo $CR_PAT | docker login ghcr.io -u <your-username> --password-stdin : Log in to GitHub Container Registry ($CR_PAT is your GitHub Personal Access Token, which should have write:packages, read:packages, and delete:packages scope.)
-- docker push ghcr.io/${{ github.repository }}/llama_rag:latest : Tag and push the image to GitHub Container Registry
-
+To make sure that the Dockerfile is correctly set up to run the streamlit Q&A model. 
+```bash
+docker build -t ghcr.io/<your-username>/<your-repo-name>:latest .
+```
+Log in to GitHub Container Registry ($CR_PAT is your GitHub Personal Access Token, which should have write:packages, read:packages, and delete:packages scope.)
+```bash
+echo $CR_PAT | docker login ghcr.io -u <your-username> --password-stdin
+```
+Tag and push the image to GitHub Container Registry
+```bash
+docker push ghcr.io/${{ github.repository }}/llama_rag:latest
+```
 
 **Step 2**: Set Up AWS EKS (Elastic Kubernetes Service):
 - After creating an AWS account, you need to create an IAM user. To fully manage the EKS container, you should attach the following policies to your profil : AmazonEKSClusterPolicy, AmazonEKSServicePolicy, AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEC2FullAccess, AmazonVPCFullAccess, IAMFullAccess, AmazonCloudFormationFullAccess, ElasticLoadBalancingFullAccess.
