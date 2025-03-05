@@ -141,7 +141,9 @@ kubectl apply -f llam-service.yaml
 Once the deployment is successful, expose the application using a LoadBalancer. Kubernetes will automatically provision an AWS ELB (Elastic Load Balancer).
 
 You can check the service’s external IP after it's created by running:
-- kubectl get services
+```bash
+kubectl get services
+```
 
 Once the LoadBalancer is up and running, access the Streamlit app via the EXTERNAL-IP provided by the service.
 
