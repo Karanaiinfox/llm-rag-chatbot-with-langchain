@@ -111,8 +111,16 @@ docker push ghcr.io/${{ github.repository }}/llama_rag:latest
 - Once the IAM user has the necessary permissions and has been correctly created, you will see a success screen with the user’s Access Key ID and Secret Access Key. You need then to configure AWS CLI with the new user's Credentials using **aws configure** command. 
 
 **Step 3**: Set Up AWS EKS (Elastic Kubernetes Service):
-- eksctl create cluster --name llama-cluster --region <region> --nodes 2 --node-type t3.medium --managed : This command creates on AWS a Kubernetes cluster named llama-cluster with 2 nodes of type t2.medium.
-- aws eks --region <region> update-kubeconfig --name llama-cluster : After creating the cluster, we run the following command to update kubectl to use the newly created EKS cluster.
+
+This command creates on AWS a Kubernetes cluster named llama-cluster with 2 nodes of type t2.medium.
+```bash
+eksctl create cluster --name llama-cluster --region <region> --nodes 2 --node-type t3.medium --managed 
+```
+
+After creating the cluster, we run the following command to update kubectl to use the newly created EKS cluster.
+```bash
+aws eks --region <region> update-kubeconfig --name llama-cluster 
+```
 
 **Step 4**: Create Kubernetes Deployment YAML:
 Create a llama-deployment.yaml to define your Kubernetes deployment for the Streamlit app. This will include details like container image, resources (CPU, memory), environment variables, etc.
@@ -122,8 +130,12 @@ In your GitHub repo, create the .github/workflows/ci-cd.yaml file. This will con
 
 **Step 6**: Apply Kubernetes Deployment:
 Once the GitHub Action is triggered (on push to the main branch), the deployment will be applied to the EKS cluster automatically:
-- kubectl apply -f llama-deployment.yaml
-- kubectl apply -f llam-service.yaml
+```bash
+kubectl apply -f llama-deployment.yaml
+```
+```bash
+kubectl apply -f llam-service.yaml
+```
 
 **Step 7** : Expose the Application (Service):
 Once the deployment is successful, expose the application using a LoadBalancer. Kubernetes will automatically provision an AWS ELB (Elastic Load Balancer).
@@ -134,9 +146,19 @@ You can check the service’s external IP after it's created by running:
 Once the LoadBalancer is up and running, access the Streamlit app via the EXTERNAL-IP provided by the service.
 
 In order to monitor and maintain the deployment, you can use the following commands:
-- kubectl get pods : check the status of your pods
-- kubectl logs <pod-name>: check the logs of the pod-name pod
-- kubectl scale deployment llama-deployment --replicas=3 : Sclale the deployment if needed.
+```bash
+kubectl get pods : check the status of your pods
+```
+
+Check the logs of the pod-name pod
+```bash
+kubectl logs <pod-name>
+```
+
+Sclale the deployment if needed.
+```bash
+kubectl scale deployment llama-deployment --replicas=3 
+```
 
 ## :chart_with_upwards_trend: Performance & results
 
