@@ -46,4 +46,4 @@ ENV STREAMLIT_STATIC_PATH=/app/dataset/pdf
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
 # run the streamlit run command
-ENTRYPOINT ["streamlit", "run", "./app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "./app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
