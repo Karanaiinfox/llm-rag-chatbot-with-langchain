@@ -75,11 +75,13 @@ The repository contains the following files & directories:
 In this section, we are going to make a demonstration of the streamlit webapp. The user can ask any question and the chatbot will answer. 
 
 To launch the deployment of the streamlit app with docker, type the following commands :
+to build the docker image
 ```bash
-docker build -t streamlit . : to build the docker image
+docker build -t streamlit . 
 ```
+To launch the container based on our image
 ```bash
-docker run -p 8501:8501 streamlit: to launch the container based on our image
+docker run -p 8501:8501 streamlit
 ```
 
 To view our app, users can browse to http://0.0.0.0:8501 or http://localhost:8501
@@ -89,6 +91,7 @@ To view our app, users can browse to http://0.0.0.0:8501 or http://localhost:850
 If you are interested in deploying the LLM web application on AWS. Below a step-by-step guide to follow :
 
 **Step 1**: Push Your Docker Image to GitHub Container Registry (you can also use **Amazon Elastic Container Registry (ECR)**):
+
 To make sure that the Dockerfile is correctly set up to run the streamlit Q&A model. 
 ```bash
 docker build -t ghcr.io/<your-username>/<your-repo-name>:latest .
