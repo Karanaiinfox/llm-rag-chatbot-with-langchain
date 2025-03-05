@@ -3,7 +3,7 @@ name: Build and Deploy Docker Image to GitHub Container Registry
 on:
   push:
     branches:
-      - main  # Trigger the workflow on push to the 'main' branch (or replace with your branch)
+      - main  
 
     
 jobs:
@@ -35,17 +35,16 @@ jobs:
     - name: Set up kubectl for EKS
       run: |
         aws eks --region us-east-1 update-kubeconfig --name llama-cluster
-      # Make sure the AWS IAM role used in GitHub Actions has sufficient permissions to interact with EKS
 
     # Step 5: Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  -f ./docker/Dockerfile . --no-cache  # Tag the image with the GitHub Container Registry URL
+        docker build -t ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  -f ./docker/Dockerfile . --no-cache  
 
     # Step 6: Push the Docker image to GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  # Push the image to GitHub Container Registry
+        docker push ghcr.io/${{ github.repository }}/llama_rag:${{ github.sha }}  
 
     # Step 7: Deploy to AWS EKS
     - name: Deploy to EKS
