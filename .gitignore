@@ -1,5 +1,6 @@
 # Ignore virtual environment folder
 llamavenv/
+venv/
 
 # Ignore Python bytecode files
 *.pyc

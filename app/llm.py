@@ -1,40 +1,42 @@
-from langchain_community.llms import CTransformers
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 import logging
 import time
+import os
 
 
 
 # Get the logger
 logger = logging.getLogger()
 
-def load_llm(temperature, max_new_tokens, top_p, top_k):
-    """Load the LLM model"""
+def load_llm(temperature, max_tokens, model_name="gpt-3.5-turbo"):
+    """Load the OpenAI LLM model"""
     try:
-        logger.info("Start loading llm model with CTransformers ...")
+        logger.info("Start loading OpenAI LLM model ...")
         # start time
         start_time = time.time()
 
-        # Load the locally downloaded model here
-        llm = CTransformers(
-            model="TheBloke/Llama-2-7B-Chat-GGML",
-            model_type="llama",
-            max_new_tokens=max_new_tokens,
+        # Get OpenAI API key from environment variable
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+
+        # Load the OpenAI model
+        llm = ChatOpenAI(
+            model_name=model_name,
             temperature=temperature,
-            top_p=top_p,
-            top_k=top_k,
+            max_tokens=max_tokens,
+            openai_api_key=api_key,
         )
+        
         # end time
         end_time = time.time()
-        logger.info(f"Model loaded with CTransformers successfully in {end_time - start_time: .2f} seconds")
-
-        # List all available attributes for the model
-        logger.info(llm.config)  
+        logger.info(f"OpenAI model loaded successfully in {end_time - start_time: .2f} seconds")
 
         # return the LLM
         return llm
     except Exception as e:
-        logger.error(f"Error loading LLM model: {e}")
+        logger.error(f"Error loading OpenAI LLM model: {e}")
         raise
 
 
@@ -55,18 +57,19 @@ def model_retriever(vector_db):
 
 def q_a_llm_model(retriever, llm_model):
     """
-    This function loads the LLM model, gets the relevent
+    This function loads the LLM model, gets the relevant
     docs for a given query and provides an answer
     """
     try:
-        logger.info(f"Start retrieving the relevent docs ...")
+        logger.info(f"Start retrieving the relevant docs ...")
 
         # Create a question-answering instance (qa) using the RetrievalQA class.
+        # Using "stuff" chain type for better document-based responses
         q_a = RetrievalQA.from_chain_type(
             llm=llm_model,
-            chain_type="refine",
+            chain_type="stuff",
             retriever=retriever,
-            return_source_documents=False,
+            return_source_documents=True,
         )
         return q_a
     except Exception as e:
