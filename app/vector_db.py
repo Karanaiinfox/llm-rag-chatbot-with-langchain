@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 import logging
 import time
@@ -27,22 +27,16 @@ def create_vector_db(data_path):
         documents = loader.load()
 
         # use recursive splitter to split each document into chunks
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=10)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
         texts = text_splitter.split_documents(documents)
         logger.info(" -- texts OK " )   
 
-        # Initialize embeddings model with GPU support
-        #device = "cuda" if torch.cuda.is_available() else "cpu"
-        device = "cpu"
-        
-        # generate embeddings for each chunk
-        logger.info(" -- embeddings ... " )
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            multi_process=True,
-            encode_kwargs={"normalize_embeddings": True},
-            model_kwargs={"device": device},
+        # Initialize OpenAI embeddings
+        logger.info(" -- generating OpenAI embeddings ... " )
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-large",  # Highest quality embeddings
+            openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         # indexing database
         db = FAISS.from_documents(texts, embeddings)
@@ -92,16 +86,11 @@ def create_vector_db_from_uploaded_files(uploaded_files):
         texts = text_splitter.split_documents(documents)
         logger.info(f"Split documents into {len(texts)} chunks")   
 
-        # Initialize embeddings model
-        device = "cpu"
-        
-        # generate embeddings for each chunk
-        logger.info("Generating embeddings...")
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            multi_process=True,
-            encode_kwargs={"normalize_embeddings": True},
-            model_kwargs={"device": device},
+        # Initialize OpenAI embeddings
+        logger.info("Generating OpenAI embeddings...")
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-large",  # Highest quality embeddings
+            openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         
         # indexing database

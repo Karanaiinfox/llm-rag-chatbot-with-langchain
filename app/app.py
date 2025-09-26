@@ -191,10 +191,17 @@ def page_1():
                     
                     # Show source documents if available
                     if "source_documents" in result and result["source_documents"]:
-                        with st.expander("📖 Source Documents"):
+                        with st.expander(f"📖 Source Documents ({len(result['source_documents'])} chunks retrieved)"):
+                            st.info(f"Retrieved {len(result['source_documents'])} relevant document chunks for comprehensive coverage")
                             for i, doc in enumerate(result["source_documents"]):
                                 st.write(f"**Source {i+1}:**")
-                                st.write(doc.page_content[:500] + "..." if len(doc.page_content) > 500 else doc.page_content)
+                                # Show more content for better context
+                                content = doc.page_content
+                                if len(content) > 3000:
+                                    st.write(content[:3000] + "...")
+                                    st.write(f"*[Content truncated - showing first 3000 characters of {len(content)} total]*")
+                                else:
+                                    st.write(content)
                                 st.write("---")
                     
                     st.session_state.messages.append({"role": "assistant", "content": answer})

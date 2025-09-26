@@ -24,10 +24,11 @@ This is a **Retrieval-Augmented Generation (RAG) Chatbot** built with **Streamli
 ### Key Features:
 - 📄 **PDF Document Processing**: Upload and process multiple PDF files
 - 🤖 **OpenAI Integration**: Uses GPT-3.5-turbo, GPT-4, and GPT-4-turbo-preview
-- 🔍 **Semantic Search**: FAISS vector database for efficient document retrieval
+- 🔍 **Premium Semantic Search**: FAISS vector database with OpenAI's best embeddings
 - 💬 **Interactive Chat Interface**: Real-time Q&A with uploaded documents
 - ⚙️ **Configurable Parameters**: Temperature, max tokens, and model selection
 - 📊 **Source Attribution**: Shows which documents were used for answers
+- 🚀 **Optimized for Performance**: Premium configuration for maximum accuracy
 
 ---
 
@@ -86,9 +87,9 @@ graph TD
    - Each chunk is processed for embedding generation
 
 2. **Embedding Creation**:
-   - Uses `sentence-transformers/all-MiniLM-L6-v2` model
-   - Converts text chunks into 384-dimensional vectors
-   - Normalizes embeddings for better similarity search
+   - Uses OpenAI's `text-embedding-3-large` model (highest quality)
+   - Converts text chunks into 3072-dimensional vectors
+   - Premium embeddings optimized for maximum similarity search accuracy
 
 3. **Vector Storage**:
    - FAISS (Facebook AI Similarity Search) database
@@ -112,10 +113,10 @@ graph TD
 ### FAISS Vector Database:
 - **Type**: In-memory vector store
 - **Storage Location**: RAM (temporary, rebuilt on each session)
-- **Embedding Model**: `sentence-transformers/all-MiniLM-L6-v2`
-- **Vector Dimensions**: 384
+- **Embedding Model**: OpenAI `text-embedding-3-large` (premium)
+- **Vector Dimensions**: 3072
 - **Search Method**: Cosine similarity
-- **Top-k Results**: 2 most relevant chunks per query
+- **Top-k Results**: 4 most relevant chunks per query
 
 ### Document Chunking Strategy:
 ```python
@@ -139,9 +140,8 @@ chunk_overlap = 200      # Overlap between chunks
 #### LLM & AI Libraries:
 - `openai==1.58.1` - OpenAI API client
 - `langchain==0.3.13` - LLM framework
-- `langchain-openai==0.2.10` - OpenAI integration
+- `langchain-openai==0.2.10` - OpenAI integration (includes embeddings)
 - `langchain-community==0.3.13` - Community tools
-- `sentence-transformers==3.3.1` - Embedding models
 
 #### Vector Database:
 - `faiss-cpu==1.7.4` - Vector similarity search
@@ -157,7 +157,6 @@ chunk_overlap = 200      # Overlap between chunks
 #### Utilities:
 - `python-dotenv==1.0.1` - Environment variable management
 - `psutil==6.1.1` - System monitoring
-- `transformers==4.47.1` - Hugging Face transformers
 
 ### System Requirements:
 - **Python**: 3.8+
@@ -300,9 +299,9 @@ sources = result["source_documents"]
 - Ensures continuity between chunks
 - Prevents information loss at boundaries
 
-#### **Top-k Retrieval**: 2 documents
-- More documents: Richer context, but potentially more noise
-- Fewer documents: More focused, but may miss relevant information
+#### **Top-k Retrieval**: 4 documents
+- More documents: Richer context, better accuracy, more comprehensive answers
+- Optimized for premium embeddings: Leverages high-dimensional vector space
 
 ---
 
@@ -516,3 +515,31 @@ This RAG chatbot represents a powerful combination of modern AI technologies:
 The system is designed to be both powerful and accessible, allowing users to quickly set up a document-based Q&A system without extensive AI/ML expertise. While it has limitations, it excels at its core purpose: providing accurate, source-attributed answers based on uploaded documents.
 
 For production use, consider implementing additional features like user authentication, document versioning, and more sophisticated chunking strategies based on your specific use case.
+
+---
+
+## 💰 **Premium Configuration & Costs**
+
+### **Current Premium Setup:**
+- **Embedding Model**: `text-embedding-3-large` (highest quality)
+- **Vector Dimensions**: 3072 (vs 1536 for small model)
+- **Retrieval**: Top-4 most relevant chunks per query
+- **Chunk Size**: 1000 characters with 200 overlap
+
+### **Cost Breakdown:**
+- **text-embedding-3-large**: ~$0.00013 per 1K tokens
+- **GPT-3.5-turbo**: ~$0.0015 per 1K tokens
+- **GPT-4**: ~$0.03 per 1K tokens
+- **GPT-4-turbo-preview**: ~$0.01 per 1K tokens
+
+### **Performance Benefits:**
+- **Higher Accuracy**: 3072-dimensional embeddings capture more semantic nuances
+- **Better Context**: 4x retrieval provides richer context for responses
+- **Reduced Follow-ups**: Better initial answers reduce need for clarification questions
+- **Premium Quality**: Best possible embedding model for maximum similarity search accuracy
+
+### **Cost Optimization Tips:**
+- Embeddings are generated once per document upload (not per query)
+- Higher accuracy reduces token usage in follow-up questions
+- Premium embeddings provide better context, leading to more focused responses
+- Monitor usage in OpenAI dashboard to track costs
